@@ -52,7 +52,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 region: ap-southeast-1
-                EXTRA_ARGS: --stage develop
+                EXTRA_ARGS: --stage production
 definitions:
   caches:
     npm: $HOME/.npm
