@@ -1,7 +1,7 @@
 image: node:latest
 pipelines:
-  branches:
-    develop:
+  pull-requests:
+    '**':
       - step:
           name: Build and test
           caches:
