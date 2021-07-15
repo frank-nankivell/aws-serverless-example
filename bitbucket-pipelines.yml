@@ -1,0 +1,66 @@
+image: node:latest
+pipelines:
+  default:
+    - step:
+        name: Build and test
+        script:
+          - npm install
+          - npm run lint
+          - npm run test
+  pull-requests:
+    '**':
+      - step:
+          name: Build and test
+          caches:
+          - npm
+          - cypress
+          - node
+          script:
+          - npm ci
+          - npm run lint
+          - npm run test
+      - step:
+          name: Deploy develop
+          caches:
+            - npm
+            - cypress
+            - node
+          script:
+            #- CYPRESS_INSTALL_BINARY=0 npm install
+            - pipe: atlassian/serverless-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                region: ap-southeast-1
+                EXTRA_ARGS: --stage develop
+      - step:
+          name: Integration tests
+          image: cypress/base:14.16.0
+          caches:
+            - npm
+            - cypress
+            - node
+          script:
+            - npm ci
+            - export CYPRESS_api_URL=$CYPRESS_DEV 
+            - echo "$CYPRESS_api_URL"
+            - npm run e2e
+      - step:
+          name: Deploy Production
+          trigger: manual
+          caches:
+            - npm
+            - cypress
+            - node
+          script:
+            #- CYPRESS_INSTALL_BINARY=0 npm install
+            - pipe: atlassian/serverless-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                region: ap-southeast-1
+                EXTRA_ARGS: --stage production
+definitions:
+  caches:
+    npm: $HOME/.npm
+    cypress: $HOME/.cache/Cypress
