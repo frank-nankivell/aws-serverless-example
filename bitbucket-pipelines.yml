@@ -26,8 +26,8 @@ pipelines:
             - cypress
             - node
           script:
-            - CYPRESS_INSTALL_BINARY=0 npm install
-            - pipe: atlassian/serverless-deploy:0.2.0
+            #- CYPRESS_INSTALL_BINARY=0 npm install
+            - pipe: atlassian/serverless-deploy:1.1.0
               variables:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
@@ -42,7 +42,6 @@ pipelines:
             - node
           script:
             - npm ci
-           # - export $CYPRESS_DEV > cypress.env.json
             - export CYPRESS_api_URL=$CYPRESS_DEV 
             - echo "$CYPRESS_api_URL"
             - npm run e2e
